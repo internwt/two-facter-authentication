@@ -40,13 +40,10 @@ app.post('/api/verify', (req, res) => {
         const verify = speakeasy.totp.verify({
             secret,
             encoding: 'base32',
-            token
+            token,
+            window: 1
         })
         if (verify) {
-            db.push(path, {
-                id: userId,
-                secret: temp_secret
-            })
             res.json({ verify: true })
         }
         res.json({ verify: false })
