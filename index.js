@@ -45,8 +45,9 @@ app.post('/api/verify', (req, res) => {
         })
         if (verify) {
             res.json({ verify: true })
+        }else{
+            res.json({ verify: false })
         }
-        res.json({ verify: false })
     } catch (error) {
         res.status(500).json({
             message: "Error generating the secret"
