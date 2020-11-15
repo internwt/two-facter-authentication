@@ -1,4 +1,5 @@
 const express = require('express');
+const bodyParser = require('body-parser')
 const speakeasy = require('speakeasy')
 const uuid = require('uuid')
 const { JsonDB } = require('node-json-db');
@@ -6,7 +7,17 @@ const { Config } = require('node-json-db/dist/lib/JsonDBConfig')
 const db = new JsonDB(new Config("myDataBase", true, false, '/'));
 const app = express();
 
+// user routes here
 app.use(express.json())
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+
+const user = require('./src/userAuth/route')
+app.use('/api',user)
+
+
+
+
+
 app.get('/api', (req, res) => {
     res.json({
         message: "two factor authentication"
@@ -16,7 +27,6 @@ app.get('/api', (req, res) => {
 // register user and create temp secret
 app.post('/api/register', (req, res) => {
     const id = uuid.v4()
-
     try {
         const path = `/user/${id}`
         const temp_secret = speakeasy.generateSecret()
@@ -45,7 +55,7 @@ app.post('/api/verify', (req, res) => {
         })
         if (verify) {
             res.json({ verify: true })
-        }else{
+        } else {
             res.json({ verify: false })
         }
     } catch (error) {
